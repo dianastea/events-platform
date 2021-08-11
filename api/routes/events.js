@@ -57,6 +57,16 @@ router.get('/:id', async (request, response, next) => {
     })
 })
 
+router.get('/test/:user_id/:event_id', async (request, response, next) => {
+    const {event_id, user_id} = request.params; 
+    console.log(event_id, user_id); 
+    await pool.query('SELECT * FROM attendees WHERE event_id=$1 AND user_id=$2', [event_id, user_id], (e4, r4) => {
+        if (e4) return next(e4); 
+        console.log(r4.rows.length); 
+        response.json(r4.rows); 
+    })
+})
+
 router.get('/user/:id', async (request, response, next) => {
     const { id } = request.params; 
     await pool.query(`SELECT events.id, events.name, events.time, events.description FROM attendees JOIN events ON attendees.event_name=events.name WHERE attendees.user_id = $1`, [id], (err, res) => {
@@ -136,25 +146,7 @@ router.put('/completed/:user_id/:task_id', async (request, response, next) => {
             })
         })
     })
-    
-    
 
-
-    // await pool.query(`SELECT * FROM user_tasks WHERE user_id=${user_id} AND task_id=${task_id}`, (err, res) => {
-    //     if (err) return next(err); 
-    //     console.log("resoejrgeir")
-    //     console.log("ROWS",res.rows)
-    //     var {completed} = res.rows[0];
-    //     if (completed == null) completed = true; 
-    //     console.log("NEW VAL", !completed); 
-    //     pool.query('UPDATE user_tasks SET completed=$1 WHERE user_id=$2 AND task_id=$3', (!completed, user_id, task_id), (err2, res2) => {
-    //         if (err2) return next(err2); 
-    //         console.log("AGH")
-    //         response.json(res); 
-    //     })
-
-
-    // })
 })
 
 
@@ -196,12 +188,37 @@ router.post('/attendees/:user_id/:event_id', async (request, response, next) => 
         const {name, id} = res.rows[0]; 
 
         // INSERT THE EVENT,USER PAIR INTO ATTENDEES 
-        pool.query(`INSERT INTO attendees(event_name, event_id, user_id) VALUES ($1, $2, $3)`, [name, id, user_id], (e, r) => {
-            if (e) return next(e); 
+        // CHECK FOR DUPLICATES: SELECT ename, eid, uid FROM attendees WHERE event_name=$1, event_id=$2, user_id=$3... 
+        
+        
+        pool.query('SELECT * FROM attendees WHERE event_id=$1 AND user_id=$2', [event_id, user_id], (e4, r4) => {
+            if (e4) return next(e4); 
 
-            // SELECTING ALL TASKS CORRESPONDING TO THE REQ. EVENT 
-            response.redirect(`/events/tasks/${user_id}`)
-            
+            if (r4.rows.length > 0) response.redirect('/'); 
+            else {
+                pool.query(`INSERT INTO attendees(event_name, event_id, user_id) VALUES ($1, $2, $3)`, [name, id, user_id], (e, r) => {
+                    if (e) return next(e); 
+        
+                    // Insert all tasks related to that event into the user_tasks 
+                    // SELECT tasks.id FROM events JOIN tasks ON tasks.event_id=events.id WHERE events.id=${id}
+                    pool.query('SELECT tasks.id FROM events JOIN tasks ON tasks.event_id=events.id WHERE events.id=$1', [event_id], (e2, r2) => {
+                        if (e2) return next(e2); 
+                        const tasks = r2.rows; 
+                        
+                        // foreach(task:tasks) INSERT INTO user_tasks(user_id, task_id, completed) 
+                        for (index in tasks) {
+                            const task = tasks[index]; 
+                            pool.query('INSERT INTO user_tasks(user_id, task_id, completed) VALUES ($1,$2,$3)', [user_id, task.id, false], (e3, r3) => {
+                                if (e3) return next(e3); 
+                            })
+                        }
+                        
+                        // SELECTING ALL TASKS CORRESPONDING TO THE REQ. EVENT 
+                        response.redirect(`/events/tasks/${user_id}`)
+        
+                    })            
+                })
+            }
         })
     })
 
