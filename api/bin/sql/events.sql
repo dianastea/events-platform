@@ -6,8 +6,9 @@ CREATE TABLE events(
 ); 
 
 CREATE TABLE users(
-    id serial, 
-    name character varying(2000)
+    id serial PRIMARY KEY, 
+    username character varying(255) UNIQUE, 
+    password character varying(100)
 ); 
 
 CREATE TABLE attendees(
@@ -35,8 +36,8 @@ VALUES ('The Origins of the Universe', '00:11:15', 'An introduction to space sci
 INSERT INTO events(name, time, description) 
 VALUES ('STEM World', '00:11:15', 'An introduction to space science and the wonders it has to hold. Go space!'); 
 
-INSERT INTO users(name)
-VALUES ('Diana');
+-- INSERT INTO users(name)
+-- VALUES ('Diana');
 
 INSERT INTO attendees(event_name, event_id, user_id) 
 VALUES ('STEM World',2,1); 
@@ -44,5 +45,5 @@ VALUES ('STEM World',2,1);
 INSERT INTO tasks(event_id, name, link)
 VALUES (2, 'Dummy ToDo Item', 'https://localhost:8080'); 
 
-INSERT INTO user_tasks(user_id, task_id)
-VALUES(1, 1); 
+-- INSERT INTO user_tasks(user_id, task_id)
+-- VALUES(1, 1); 
