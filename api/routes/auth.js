@@ -1,25 +1,17 @@
+const initPassport = require('../controllers/passportController'); 
 const { Router } = require('express'); 
 const router = Router(); 
-const session = require('express-session'); 
+const loginController = require('../controllers/loginController'); 
 const passport = require('passport'); 
-const pool = require('../db'); 
 
-router.use(session({
-  secret: "Our little secret.", 
-  resave: false, 
-  saveUninitialized: true
-}))
+initPassport(); 
 
-// INITIALIZE PASSPORT PACKAGE
-router.use(passport.initialize()); 
-// USE PASSPORT TO CONFIGURE SESSIONS
-router.use(passport.session()); 
+router.get('/', loginController.checkLoggedIn, (req, res) => {
+  return res.render({user: req.user}); 
+})
+// router.get("/login",loginController.checkLoggedOut, loginController.getPageLogin);
 
-// router.use(CREATESTRATEGY???)
+// BELOW METHOD SHOULD BE POST 
+router.get("/login", passport.authenticate('google', { scope: ['profile', 'email'], successReturnToOrRedirect: '/auth'}));
 
-passport.serializeUser(User.serializeUser()); 
-passport.deserializeUser(User.deserializeUser()); 
-
-// necessary for sessions
-// serialize = creates cookie w/ user's identifications
-// deserialize = allows passport to decode idenficiations (so we can authenticate them)
+module.exports = router; 

@@ -6,9 +6,10 @@ CREATE TABLE events(
 ); 
 
 CREATE TABLE users(
-    id serial PRIMARY KEY, 
-    username character varying(255) UNIQUE, 
-    password character varying(100)
+    id serial, 
+    google_id character varying(65500),
+    name character varying(255), 
+    email character varying(255)
 ); 
 
 CREATE TABLE attendees(
