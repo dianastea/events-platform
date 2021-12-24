@@ -1,6 +1,8 @@
 const { Router } = require('express'); 
+const { query } = require('../db');
 const router = Router(); 
 const pool = require('../db'); 
+const { password } = require('../secrets/db_configuration');
 // const event = require('../components/Event'); 
 
 // *** CHANGES ***
@@ -14,6 +16,7 @@ router.get('/', async (request, response, next) => {
         response.json(res.rows); 
     })
 })
+
 
 // COMMENT OUT
 router.get('/usertasks/:user_id', async (request, response, next) => {
@@ -35,12 +38,12 @@ router.get('/attendees', async (request, response, next) => {
 // DUPLICATE OF USERTASKS/:USER_ID -- think it doesn't work because of the str literal -- delete later
 router.get('/tasks/:id', async (request, response, next) => {
     const { id } = request.params; 
-    console.log('worked'); 
     await pool.query(`SELECT tasks.id, tasks.event_id, tasks.name, tasks.link FROM user_tasks JOIN tasks ON user_tasks.task_id=tasks.id WHERE user_tasks.user_id=${id}`, (err, res) => {
         if (err) return next(err); 
         response.json(res.rows); 
     })
 })
+
 
 // GET ALL TASKS 
 router.get('/tasks', async (request, response, next) => {
@@ -48,6 +51,25 @@ router.get('/tasks', async (request, response, next) => {
         if (err) return next(err);
         response.json(res.rows); 
     })
+})
+
+// TOGGLES THE STATUS OF COMPLETION OF A PARTICULAR TASK FOR A PARTICULAR USER 
+router.get('/completed/:user_id/:task_id', async (request, response, next) => {
+    const { user_id, task_id } = request.params; 
+    await pool.query('SELECT * FROM user_tasks WHERE user_id=$1 AND task_id=$2', [user_id, task_id], (err, res) => {
+        if (err) return next(err); 
+        var { completed } = res.rows[0]; 
+        if (completed == null) { completed = true; }
+        else completed = completed 
+        pool.query('UPDATE user_tasks SET completed=$1 WHERE user_id=$2 AND task_id=$3', [!completed, user_id, task_id], (err2, res2) => {
+            if(err2) return next(err2); 
+            pool.query("SELECT * FROM user_tasks", (e,r) => {
+                if (e) return next(e); 
+                response.json(r.rows); 
+            })
+        })
+    })
+
 })
 
 // GET EVENT BY ID 
@@ -62,13 +84,12 @@ router.get('/:id', async (request, response, next) => {
 // SELECT SPECIFIC ENTRY IN ATTENDEES
 router.get('/test/:user_id/:event_id', async (request, response, next) => {
     const {event_id, user_id} = request.params; 
-    console.log(event_id, user_id); 
     await pool.query('SELECT * FROM attendees WHERE event_id=$1 AND user_id=$2', [event_id, user_id], (e4, r4) => {
         if (e4) return next(e4); 
-        console.log(r4.rows.length); 
         response.json(r4.rows); 
     })
 })
+
 
 // ALL EVENTS FOR SPECIFIC USER 
 router.get('/user/:id', async (request, response, next) => {
@@ -78,6 +99,7 @@ router.get('/user/:id', async (request, response, next) => {
         response.json(res.rows); 
     })
 })
+
 
 // ADD AN EVENT 
 router.post('/', async (request, response, next) => {
@@ -97,6 +119,7 @@ router.post('/task', async (request, response, next) => {
     // FIND THE ID OF THE REQUESTED EVENT 
     await pool.query('SELECT id FROM events WHERE name=$1',[eventName], (err, res) => {
         if (err) return next(err); 
+        if (res.rows.length == 0) return next(err); 
         event_id = res.rows[0].id; 
         
         // INSERT NEW TASK INTO TASKS 
@@ -107,20 +130,20 @@ router.post('/task', async (request, response, next) => {
             pool.query(`SELECT user_id FROM attendees WHERE event_id=${event_id}`, (err3, res3) => {
                 if (err3) return next(err3); 
                 const users = res3.rows; 
-                console.log("*******RES3.ROWS**********")
-                console.log(res3.rows); 
+                // console.log("*******RES3.ROWS**********")
+                // console.log(res3.rows); 
 
                 // FIND THE NEW TASK ID 
                 pool.query('SELECT id from tasks', (err4, res4) => {
                     if (err4) return next(err4); 
-                    console.log("*******RES4.ROWS**********")
-                    console.log(res4.rows); 
+                    // console.log("*******RES4.ROWS**********")
+                    // console.log(res4.rows); 
                     const task_id = res4.rows[res4.rows.length-1].id; 
-                    console.log("****TASK_ID***")
-                    console.log(task_id); 
+                    // console.log("****TASK_ID***")
+                    // console.log(task_id); 
                     for (index in users) {
                         let user = users[index]; 
-                        console.log(user, user.user_id); 
+                        // console.log(user, user.user_id); 
 
                         // FOR EACH USER, INSERT TASK INTO THE USER'S TASKS 
                         pool.query('INSERT INTO user_tasks(user_id, task_id, completed) VALUES ($1, $2, $3)', [user.user_id, task_id, false], (err5, res5) => {
@@ -136,48 +159,9 @@ router.post('/task', async (request, response, next) => {
     })
 })
 
-// TOGGLES THE STATUS OF COMPLETION OF A PARTICULAR TASK FOR A PARTICULAR USER 
-router.put('/completed/:user_id/:task_id', async (request, response, next) => {
-    const { user_id, task_id } = request.params; 
-    await pool.query('SELECT * FROM user_tasks WHERE user_id=$1 AND task_id=$2', [user_id, task_id], (err, res) => {
-        if (err) return next(err); 
-        console.log(res.rows[0]); 
-        var { completed } = res.rows[0]; 
-        if (completed == null) { console.log("ANNOYING)!"); completed = true; } 
-        else console.log(completed); 
-        pool.query('UPDATE user_tasks SET completed=$1 WHERE user_id=$2 AND task_id=$3', [!completed, user_id, task_id], (err2, res2) => {
-            if(err2) return next(err2); 
-            pool.query("SELECT * FROM user_tasks", (e,r) => {
-                if (e) return next(e); 
-                response.json(r.rows); 
-            })
-        })
-    })
-
-})
-
-
-// SELECT ALL USER'S TASKS?? DUPLICATE!! 
-// router.get('/utasks/:id', async (request, response, next) => {
-//     const user_id = request.params.id; 
-//     // FILTER ATTENDEES FOR EVENTS WITH USER ID 
-//     pool.query(`SELECT tasks.name, tasks.link, tasks.id FROM attendees INNER JOIN tasks ON attendees.event_id=tasks.event_id WHERE attendees.user_id=${user_id}`, (err, res) => {
-//         if (err) return next(err); 
-
-//         // LOG RESPONSE FROM LATEST QUERY 
-//         console.log("**********TASKS***********")
-//         console.log(res.rows); 
-//         response.json(res.rows); 
-                        
-//     })
-// })
-
-// THE ABOVE CODE ELIMINATES NEED FOR USER_TASKS TABLE -- which is probably better because then you don't have 500 tables 
-
 
 // WHEN ADDING EVENT TO USER, JUST ADD AN ATTENDEES ENTRY 
 // WHEN ADDING TASK TO EVENT, JUST ADD THE TASK TO TASKS 
-
 
 
 // ISSUES OF DUPLICATE USER_EVENTS AND USER_TASKS SOLVED BY ELIMINATING DUPLICATE CALLS TO THE BELOW API CALL
@@ -189,7 +173,7 @@ router.post('/attendees/:user_id/:event_id', async (request, response, next) => 
     // FIND THE EVENT 
     await pool.query(`SELECT name, id FROM events WHERE id=${event_id}`, (err, res) => {
         if (err) return next(err); 
-        console.log(res.rows); 
+        // console.log(res.rows); 
         const {name, id} = res.rows[0]; 
 
         // CHECK EXISTING ENTRY  
@@ -230,7 +214,7 @@ router.post('/attendees/:user_id/:event_id', async (request, response, next) => 
 // INSERT NEW TASK
 router.post('/tasks', async (request, response, next) => {
     const {event_id, name, link} = request.body; 
-    await pool.query('INSERT INTO tasks(event_id, name, link) VALUES ($1, $2, $3)', [event_id, name, link], (err, res) => {
+    await pool.query('UPDATE tasks(event_id, name, link) VALUES ($1, $2, $3)', [event_id, name, link], (err, res) => {
         if (err) return next(err); 
         response.redirect('/events/tasks'); 
     })

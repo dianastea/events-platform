@@ -65,6 +65,7 @@ server.get('/failed', (req, res) => {
     res.send("YOU FAILED TO LOG IN")
 })
 
+// NEEDED? 
 server.get('/good', (req, res) => { 
     console.log("GOOD")
     console.log(req.session); 
@@ -73,10 +74,6 @@ server.get('/good', (req, res) => {
     }
     else res.json(req.user); 
 }); 
-
-server.get('/userInfo', (req, res) => {
-    res.json(req.user); 
-})
 
 
 server.get('/logout', (req, res) => {
