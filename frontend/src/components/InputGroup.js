@@ -1,7 +1,8 @@
 import React, { Fragment, useState } from "react";
 import {Input, Button} from '@material-ui/core';
 import { Grid, Paper, Typography } from "@material-ui/core";
-import { createEvent } from "../services/UserService"; 
+import { createGroup } from "../services/UserService";
+
 
 const form = {
     display: "grid", 
@@ -15,19 +16,18 @@ const form = {
 
 
 
-const InputEvent = () => {
+const InputGroup = (props) => {
   const [state, setState] = useState({
       name: "", 
       description: "", 
-      time: ""
+      user_id: props.user_id 
   });
 
   const onSubmitForm = async e => {
     e.preventDefault();
-    createEvent(state)
-    // resets state? 
+    console.log(createGroup)
+    createGroup(state)
     window.location = "/"
-    
   };
 
   const handleChange = (e) => {
@@ -41,16 +41,15 @@ const InputEvent = () => {
         <form noValidate autoComplete="off" style={form} onSubmit={onSubmitForm}>
         <Typography
                     variant="h4">
-                    Submit an Event
+                    Create a Group
                 </Typography>
             <Input placeholder="Name" name="name" value={state.name} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
             <Input placeholder="Description" name="description" value={state.description} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
-            <Input placeholder="Time" name="time" value={state.time} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
-            <Button color="primary" variant="contained" onClick={onSubmitForm} type="submit"> Submit Event </Button>        
+            <Button color="primary" variant="contained" onClick={onSubmitForm} type="submit"> Create Group </Button>        
         </form>
       
     </Fragment>
   );
 };
 
-export default InputEvent;
+export default InputGroup;

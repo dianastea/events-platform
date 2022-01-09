@@ -29,7 +29,6 @@ function UserEvents(props) {
     // id = user id 
     getUserEvents(props.id)
     .then(events => {
-      console.log('user events (useEffect)',events); 
       setEvents(events); 
     })
   })

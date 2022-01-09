@@ -104,6 +104,7 @@ router.get('/user/:id', async (request, response, next) => {
 // ADD AN EVENT 
 router.post('/', async (request, response, next) => {
     const {name, time, description} = request.body; 
+    console.log(request.body)
     await pool.query('INSERT INTO events(name, time, description) VALUES ($1, $2, $3)', [name, time, description], (err, res) => {
         if (err) return next(err); 
         response.redirect('/events'); 

@@ -12,10 +12,6 @@ export default function App() {
     <div className="wrapper"> 
       <Welcome/> 
       <Login/>
-      <div className="forms">
-        <InputEvent/> 
-        <InputTask /> 
-      </div>
       <UserInfo/> 
     </div> 
   )

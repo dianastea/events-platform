@@ -8,6 +8,15 @@ export async function getAllEvents() {
     }
 }
 
+export async function getAllGroups() {
+    try {
+        const response = await(fetch('/groups')); 
+        return response.json(); 
+    } catch (error) {
+        return []; 
+    }
+}
+
 // ADD EVENT,USER ENTRY 
 export async function updateAttendees(user_id, events_id) {
     try {
@@ -20,6 +29,7 @@ export async function updateAttendees(user_id, events_id) {
         return error; 
     }
 }
+
 
 // GET USER INFO
 export async function getUserInfo(signal) {
@@ -44,6 +54,7 @@ export async function getUserEvents(id) {
         return error; 
     }
 }
+
 
 // GET USER'S TASKS 
 export async function getUserTasks(user_id) {
@@ -71,8 +82,30 @@ export async function createEvent(data) {
     const response = await fetch('/events', {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({event: data})
+        body: JSON.stringify(data)
     })
 
     return await response.json(); 
+}
+
+export async function createGroup(data) {
+    const response = await fetch('/groups', {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    return await response.json(); 
+}
+
+export async function joinGroup(group_name, user_id) {
+    try {
+        const response = await fetch('/groups/join', {
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({'group_name': group_name, 'user_id': user_id})
+        })
+        return response.json(); // JSON()???? 
+    } catch (error) {
+        return error; 
+    }
 }

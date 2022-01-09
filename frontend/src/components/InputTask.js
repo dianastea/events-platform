@@ -13,16 +13,16 @@ const form = {
     boxShadow: "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
 }
 
-const InputEvent = (props) => {
+const InputTask = (props) => {
   const [state, setState] = useState({
       eventName: "", 
       taskName: "",
-      link: ""
+      link: "",
+      user_id: props.user_id
   });
 
   const onSubmitForm = async e => {
     e.preventDefault();
-    console.log("worked")
     try {
       const body = state;
       const response = await fetch(`/events/task`, {
@@ -61,4 +61,4 @@ const InputEvent = (props) => {
   );
 };
 
-export default InputEvent;
+export default InputTask;

@@ -4,7 +4,11 @@ import Tasks + MyEvents, passing through the user.google_id <-- NEEDED?
 import React, {useState, useEffect} from 'react'; 
 import TodoList from "./components/TodoList"; 
 import AllEvents from "./AllEvents"; 
+import AllGroups from "./AllGroups"; 
 import UserEvents from "./UserEvents"; 
+import InputGroup from "./components/InputGroup"; 
+import InputEvent from "./components/InputEvent"; 
+import InputTask from "./components/InputTask"; 
 import { getUserInfo } from "./services/UserService"; // NEEDED? 
 import AbortController from 'abort-controller'; 
 import { Typography, Grid} from "@material-ui/core"; 
@@ -15,15 +19,6 @@ export default function UserInfo() {
     const [user, setUser] = useState({google_id: 0, id: 0}); 
     
     useEffect(() => {
-        /* NEEDED? - AbortController */
-        // const abortController = new AbortController(); 
-        // const signal = abortController.signal; 
-
-        // fetch('/userInfo', {signal : signal})
-        // .then(user => user.json())
-        // .then(user => {
-        //     setUser(user); 
-        // })
 
         getUserInfo()
         .then(user => {
@@ -31,18 +26,19 @@ export default function UserInfo() {
             setUser(user); 
         })
 
-        // return function cleanup() {
-        //     abortController.abort(); 
-        // }
     }, [])
     
     return (
         <div>
+            <div className="forms">
+                <InputGroup user_id={user.id}/> 
+                <InputEvent /> 
+                <InputTask user_id={user.id}/> 
+            </div>
             <TodoList user_id={user.id}/> 
             <div className="">
-                {/* All Events */}
                 <AllEvents id={user.id}/> 
-                {/* User Events */}
+                <AllGroups user_id={user.id}/> 
                 <UserEvents id={user.id}/> 
             </div>
         </div>
