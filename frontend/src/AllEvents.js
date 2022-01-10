@@ -7,7 +7,7 @@ import TodoList from "./components/TodoList";
 import { Grid, Paper, Typography, Divider } from "@material-ui/core";
 
 import './App.css';
-import { getAllEvents, getUserEvents, updateAttendees} from './services/UserService';
+import { getAllEvents, getUserEvents, updateAttendees, checkGroupMembership} from './services/UserService';
 
 const grid = {
     display: "grid",
@@ -25,18 +25,17 @@ function AllEvents(props) {
     // ALL THE JS FUNCTIONS
 
     // When a user presses "Attend" on an Event in "All Events," the 
-    const attendEvent = (e) => {
-        const event_id = e.currentTarget.id; // id == event_id 
-        console.log(e.currentTarget);
-        console.log("id,", event_id);
+    const attendEvent = async (e) => {
+        const [event_id, group_name] = e.currentTarget.id.split(",")
+        console.log("AGHAGHAGH,", event_id, group_name, e.currentTarget.id);
         console.log("user_id", props.id); 
 
-        // If the user  
-        if (props.id != 0) {
+        const checked = await checkGroupMembership(props.id, group_name)
+        console.log(checked, checked.length)
+        if (checked.length > 0) {
+            // membership confirmed
             updateAttendees(props.id, event_id)
-                .then(useEffect); 
         }
-
     }
 
     useEffect(() => {
@@ -44,11 +43,6 @@ function AllEvents(props) {
             .then(events => {
                 setState({ ...state, events: events });
             })
-        // getUserEvents(props.id)
-        // .then(attending => {
-        //     console.log(attending); 
-        //     setState({...state, myEvents: attending}); 
-        // })
 
     })
 
@@ -66,6 +60,7 @@ function AllEvents(props) {
                             event={event}
                             key={index}
                             id={event.id}
+                            group_name={event.group_name}
                             image="https://source.unsplash.com/random/300x300?v=4"
                             attendEvent={attendEvent}
                             attending={false}

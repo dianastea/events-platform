@@ -47,6 +47,7 @@ function UserEvents(props) {
             id={index}
             image="https://source.unsplash.com/random/300x300?v=4"
             attending={true}
+            key={index}
         /> 
       ))}
       </Grid>

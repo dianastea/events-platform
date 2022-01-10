@@ -18,6 +18,23 @@ export async function getAllGroups() {
 }
 
 // ADD EVENT,USER ENTRY 
+export async function checkGroupMembership(user_id, group_name) {
+    try {
+        const response = await(fetch(`/groups/check/${user_id}/${group_name}`))
+
+        /*
+        , {
+            method: 'GET', 
+            headers: {'Content-Type': 'applications/json'}, 
+            body: JSON.stringify({'user_id': user_id, 'group_name': group_name})
+        } */
+        return response.json(); 
+    } catch (error) {
+        return error
+    }
+}
+
+
 export async function updateAttendees(user_id, events_id) {
     try {
         const response = await(fetch(`/events/attendees/${user_id}/${events_id}`, {
@@ -46,9 +63,16 @@ export async function getUserInfo(signal) {
 // GET USER'S EVENTS 
 export async function getUserEvents(id) {
     try {
-        console.log(`USER EVENTS ID: ${id}`)
         const response = await(fetch(`/users/events/${id}`))
-        // const response = await(fetch(`/events/user/${id}`)); 
+        return response.json(); 
+    } catch (error) {
+        return error; 
+    }
+}
+
+export async function getUserAdminGroups(id) {
+    try {
+        const response = await(fetch(`/groups/admin/${id}`))
         return response.json(); 
     } catch (error) {
         return error; 

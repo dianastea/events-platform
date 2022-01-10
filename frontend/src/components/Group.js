@@ -40,7 +40,6 @@ export default function Group(props) {
               color="primary"
               name={props.name}
               user_id={props.id}
-              key={props.key}
               style={props.joined ? { display: "none" } : {}}
               onClick={(e) => {
                 e.preventDefault(); 

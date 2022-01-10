@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   Grid,
   Typography,
@@ -31,6 +31,7 @@ export default function Event(props) {
               <Typography gutterBottom variant="h5" component="h2">
                 {props.event.name}
               </Typography>
+              <Typography component="p">{props.group_name}</Typography>
               <Typography component="p">{props.event.description}</Typography>
             </CardContent>
           </CardActionArea>
@@ -38,7 +39,7 @@ export default function Event(props) {
             <Button
               size="small"
               color="primary"
-              id={props.id}
+              id={props.id + ',' + props.group_name}
               style={props.attending ? { display: "none" } : {}}
               onClick={(e) => {
                 e.preventDefault(); 
@@ -47,20 +48,6 @@ export default function Event(props) {
             >
               Attend
             </Button>
-            {/* <Button
-              size="small"
-              color="primary"
-              id={props.id}
-            //   style={props.event.attending ? {} : { display: "none" }}
-            //   onClick={(e) => {
-            //     props.removeEvent(e);
-            //   }}
-            >
-              Unregister
-            </Button> */}
-            {/* <Button size="small" color="primary" style={props.attending ? { display: "none" } : {}}>
-              Volunteer
-            </Button> */}
           </CardActions>
         </Card>
       </Grid>
