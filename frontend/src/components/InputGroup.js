@@ -3,7 +3,6 @@ import { Input, Button } from '@material-ui/core';
 import { Grid, Paper, Typography } from "@material-ui/core";
 import { createGroup } from "../services/UserService";
 
-
 const form = {
   display: "grid",
   gridTemplateColumns: "1fr",
@@ -20,8 +19,9 @@ const InputGroup = (props) => {
   const [state, setState] = useState({
     name: "",
     description: "",
-    user_id: props.user_id, 
-    groups: [] 
+    user_id: props.user_id,
+    groups: [],
+    selected: 10
   });
 
   const onSubmitForm = async e => {
@@ -35,8 +35,8 @@ const InputGroup = (props) => {
     setState({ ...state, [name]: value });
     console.log('state!!!', state)
   }
-  
-  
+
+
   return (
     <Fragment>
       <form noValidate autoComplete="off" style={form} onSubmit={onSubmitForm}>
@@ -47,7 +47,9 @@ const InputGroup = (props) => {
         <Input placeholder="Name" name="name" value={state.name} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
         <Input placeholder="Description" name="description" value={state.description} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
         <Button color="primary" variant="contained" onClick={onSubmitForm} type="submit"> Create Group </Button>
+
       </form>
+
 
     </Fragment>
   );

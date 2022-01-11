@@ -6,7 +6,7 @@ export default function useAdminGroups(user_id) {
     const [adminGroups, setGroups] = useState([]);
   
     useEffect(() => {
-        let isSubscribed = true 
+        let isSubscribed = true && user_id != 0
 
         const updateGroups = async () => {
             const adminGroups = await getUserAdminGroups(user_id)

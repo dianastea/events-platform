@@ -1,7 +1,11 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Input, Button } from '@material-ui/core';
 import { Grid, Paper, Typography } from "@material-ui/core";
 import { createEvent } from "../services/UserService";
+import useAdminGroups from "../services/userAdminGroups";
+import useUserInfo from "../services/userInfo";
+import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
+
 
 const form = {
   display: "grid",
@@ -14,13 +18,12 @@ const form = {
 }
 
 
-
-const InputEvent = () => {
+const InputEvent = (props) => {
   const [state, setState] = useState({
     name: "",
-    group_name: "", 
     description: "",
-    time: ""
+    time: "",
+    group_name: props.adminGroups[0].group_name
   });
 
   const onSubmitForm = async e => {
@@ -37,21 +40,38 @@ const InputEvent = () => {
   }
 
   return (
-    <Fragment>
+    <div>
+      <Fragment>
+      
+        <form noValidate autoComplete="off" style={form} onSubmit={onSubmitForm}>
+          <Typography
+            variant="h4">
+            Submit an Event
+          </Typography>
+          <Input placeholder="Name" name="name" value={state.name} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
+          <Input placeholder="Description" name="description" value={state.description} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
+          <Input placeholder="Time" name="time" value={state.time} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
+          <InputLabel id="demo-simple-select-label">Choose Group</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            name="group_name"
+            value={state.group_name}
+            label="Age"
+            onChange={handleChange}
+          >
+            {props.adminGroups.map((group, index) => (
+                        <MenuItem value={group.group_name} key={index}> {group.group_name} </MenuItem> 
+            ))}
+          </Select>
+          <Button color="primary" variant="contained" onClick={onSubmitForm} type="submit"> Submit Event </Button>
+        </form>
 
-      <form noValidate autoComplete="off" style={form} onSubmit={onSubmitForm}>
-        <Typography
-          variant="h4">
-          Submit an Event
-        </Typography>
-        <Input placeholder="Name" name="name" value={state.name} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
-        <Input placeholder="Group name" name="group_name" value={state.group_name} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
-        <Input placeholder="Description" name="description" value={state.description} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
-        <Input placeholder="Time" name="time" value={state.time} onChange={handleChange} inputProps={{ 'aria-label': 'description' }} />
-        <Button color="primary" variant="contained" onClick={onSubmitForm} type="submit"> Submit Event </Button>
-      </form>
+      </Fragment>
 
-    </Fragment>
+
+    </div>
+
   );
 };
 

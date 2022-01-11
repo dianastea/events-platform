@@ -35,6 +35,26 @@ router.get('/attendees', async (request, response, next) => {
     })
 })
 
+router.get('/admin/:admin_id', async (request, response, next) => {
+    const {admin_id} = request.params 
+    var events = [] 
+
+    await pool.query('SELECT * FROM groups WHERE admin_id=$1', [admin_id], (err, res) => {
+        if (err) return next(err)
+        const groups = res.rows 
+        console.log('GROUPS', groups)
+        groups.map(async (group, index) => {
+            await pool.query('SELECT * FROM events WHERE group_name=$1', [group.name], (err2, res2) => {
+                if (err2) return next(err2)
+                console.log('2ND QUERY', group.name, res2.rows)
+                res2.rows.forEach((event) => {events.push(event)})
+                if (index == groups.length - 1) response.json(events)
+            })
+        })
+    })
+
+})
+
 // DUPLICATE OF USERTASKS/:USER_ID -- think it doesn't work because of the str literal -- delete later
 router.get('/tasks/:id', async (request, response, next) => {
     const { id } = request.params; 
@@ -114,17 +134,17 @@ router.post('/', async (request, response, next) => {
 
 // INSERT A TASK 
 router.post('/task', async (request, response, next) => {
-    var {event_id, eventName, taskName, link} = request.body; 
+    var {event_id, event_name, task_name, link} = request.body; 
 
 
     // FIND THE ID OF THE REQUESTED EVENT 
-    await pool.query('SELECT id FROM events WHERE name=$1',[eventName], (err, res) => {
+    await pool.query('SELECT id FROM events WHERE name=$1',[event_name], (err, res) => {
         if (err) return next(err); 
         if (res.rows.length == 0) return next(err); 
         event_id = res.rows[0].id; 
         
         // INSERT NEW TASK INTO TASKS 
-        pool.query('INSERT INTO tasks(event_id, name, link) VALUES ($1, $2, $3)', [event_id, taskName, link], (err2, res2) => {
+        pool.query('INSERT INTO tasks(event_id, name, link) VALUES ($1, $2, $3)', [event_id, task_name, link], (err2, res2) => {
             if (err2) return next(err2); 
             
             // FIND ALL USERS FOR THE REQUESTED EVENT 

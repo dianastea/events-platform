@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import {getUserInfo, getUserAdminGroups} from './UserService'
+import {getUserInfo} from './UserService'
 
 export default function useUserInfo() {
     const [user, setUser] = useState({google_id: 0, id: 0});
