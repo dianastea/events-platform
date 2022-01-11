@@ -19,7 +19,6 @@ export default function CheckboxList(props) {
         // something w/ UserService
         getUserTasks(props.user_id)
         .then(userTasks => {
-            console.log("User Tasks",userTasks);
             setTasks(userTasks); 
         })
 

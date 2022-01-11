@@ -49,12 +49,11 @@ export async function updateAttendees(user_id, events_id) {
 
 
 // GET USER INFO
-export async function getUserInfo(signal) {
+export async function getUserInfo() {
     try {
-        const response = await(fetch('/users/userInfo', {signal: signal})); 
+        const response = await(fetch('/users/userInfo')); 
         return response.json(); 
     } catch (error) {
-        console.log("USER INFO ERROR"); 
         return error; 
     }
 }

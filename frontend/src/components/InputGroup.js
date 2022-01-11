@@ -39,7 +39,6 @@ const InputGroup = (props) => {
   
   return (
     <Fragment>
-
       <form noValidate autoComplete="off" style={form} onSubmit={onSubmitForm}>
         <Typography
           variant="h4">

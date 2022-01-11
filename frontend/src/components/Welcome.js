@@ -10,12 +10,8 @@ export default function Welcome() {
     useEffect(() => {
         getUserInfo()
         .then(info => {
-            console.log("Welcome.js USER INFO*****", info)
             setInfo(info); 
             getUserEvents(info.id)
-            .then(ev => {
-                console.log('WELCOME', ev)
-            })
         })
     })
     return (

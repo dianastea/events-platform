@@ -12,41 +12,49 @@ import InputTask from "./components/InputTask";
 import { getUserInfo, getUserAdminGroups } from "./services/UserService"; // NEEDED? 
 import AbortController from 'abort-controller'; 
 import { Typography, Grid} from "@material-ui/core"; 
+import useUserInfo from './services/userInfo';
+import useAdminGroups from './services/userAdminGroups';
 
 
 export default function UserInfo() {
     // user: provides name, email, google_id, profile pic of each user
     
-    const [state, setState] = useState({user: {google_id: 0, id: 0}, adminGroups: []})
-    // const [user, setUser] = useState({google_id: 0, id: 0, adminGroups: []}); 
-    
-    useEffect(() => {
+    const user = useUserInfo()
+    const adminGroups = useAdminGroups(user.id)
+    console.log('ADMIN GROUPS', adminGroups)
+    // useEffect(() => {
+    //     let isSubscribed = true 
 
-        getUserInfo()
-        .then(thisUser => {
-            setState({...state, user: thisUser}); 
-            // getUserAdminGroups(state.user.id)
-            // .then(groups => {
-            //     setState({...state, adminGroups: groups})
-            // })
+    //     const updateUser = async () => {
+    //         const thisUser = await getUserInfo()
+    //         if (isSubscribed) {
+    //             setState({...state, user: thisUser})
+    //             console.log('IN UPDATEUSER 1', state)
+    //             const adminGroups = await getUserAdminGroups(state.user.id)
+    //             setState({...state, adminGroups: adminGroups})
+    //             console.log('IN UPDATEUSER 2', state)
+    //         }
+            
+    //     }
 
-        })
+    //     updateUser().catch(console.error)
 
-    }, [])
+    //     return () => isSubscribed = false 
+
+    // })
     
     return (
         <div>
-            {state.user.id}
             <div className="forms">
-                {state.adminGroups.length > 0 ? <InputEvent user_id={state.user.id}/> : <div></div>}
-                {state.adminGroups.length > 0 ? <InputTask user_id={state.user.id}/> : <div></div>}
-                <InputGroup user_id={state.user.id} adminGroups={state.adminGroups}/> 
+            {adminGroups.length > 0 ? <InputEvent user_id={user.id}/> : <div></div>}
+            {adminGroups.length > 0 ? <InputTask user_id={user.id}/> : <div></div>}
+            {adminGroups.length > 0 ? <InputGroup user_id={user.id} admingroups={adminGroups} /> : <div></div>}
             </div>
-            <TodoList user_id={state.user.id}/> 
+            <TodoList user_id={user.id}/> 
             <div className="">
-                <AllEvents id={state.user.id}/> 
-                <AllGroups user_id={state.user.id}/> 
-                <UserEvents id={state.user.id}/> 
+                <AllEvents id={user.id}/> 
+                <AllGroups user_id={user.id}/> 
+                <UserEvents id={user.id}/> 
             </div>
             
         </div>
