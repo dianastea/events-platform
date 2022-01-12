@@ -18,6 +18,7 @@ let initPassport = () => {
         console.log(profile)
         console.log("REFRESH TOKEN", refreshToken); 
         console.log("ACCESS TOKEN", accessToken); 
+        
         pool.query(`SELECT * FROM users WHERE google_id=($1)`, [profile.id], (err, res) => {
           if (err) return next(err); 
           console.log(res.rows); 
@@ -25,7 +26,6 @@ let initPassport = () => {
           console.log(profile); 
          if (res.rows.length != 0) {
              user = res.rows[0]; 
-            //  console.log("USER!!!!",user); 
              return done(null, user); 
           } else {
             // NEW USER 
@@ -42,18 +42,19 @@ let initPassport = () => {
 }
 
 passport.serializeUser(function(user, done) {
-    // console.log("USER SERIALIZE", user)
+    console.log("USER SERIALIZE", user)
     done(null, user.google_id); 
   })
   
   passport.deserializeUser(function(id, done) {
+    // console.log('DESERIALIZING!!!')
     // console.log("ID!!!!", id); 
     pool.query(`SELECT * FROM users WHERE google_id=($1)`, [id], (err, res) => {
       if (err) return next(err); 
       
      if (res.rows.length != 0) {
         user = res.rows[0]; 
-        // console.log(user); 
+        console.log(user); 
         // console.log("ENTERED IF DESERIALIZE"); 
         done(null, user); 
       } else done(null, false); 

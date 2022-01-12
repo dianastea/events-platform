@@ -25,6 +25,7 @@ server.use(session({
     }
 }));
 
+// PASSPORT 
 server.use(passport.initialize()); 
 server.use(passport.session()); 
 
@@ -43,7 +44,7 @@ server.use((err, req, res, next) => {
     res.json(err); 
 })
 
-server.use(function(req,res,next){
+server.use( function(req,res,next) {
     res.locals.currentUser = req.user;
     next();
 }); 
@@ -52,12 +53,11 @@ server.get('/', (req, res) => {
     res.send("HELLO WORLD")
 })
 
-server.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], successRedirect: '/auth/good'})); 
+server.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email']})); 
 
 server.get('/auth/google/callback', 
 passport.authenticate('google', {failureRedirect: '/failed', failureFlash: true, successFlash: false}), 
 function (req, res) {
-  // SUCCESSFUL AUTH - REDIRECT HOME 
   res.redirect("http://localhost:3000"); 
 })
 
@@ -65,21 +65,24 @@ server.get('/failed', (req, res) => {
     res.send("YOU FAILED TO LOG IN")
 })
 
-// NEEDED? 
-server.get('/good', (req, res) => { 
-    console.log("GOOD")
-    console.log(req.session); 
-    if (!req.isAuthenticated()) {
-        res.redirect('/auth/google'); 
-    }
-    else res.json(req.user); 
-}); 
+// // NEEDED? 
+// server.get('/good', (req, res) => { 
+//     console.log("GOOD")
+//     console.log(req.session); 
+//     if (!req.isAuthenticated()) {
+//         res.redirect('/auth/google'); 
+//     }
+//     else res.json(req.user); 
+// }); 
 
 
 server.get('/logout', (req, res) => {
     console.log('LOGGING OUT')
+    req.logout() 
     req.session.destroy(function(err) {
         if (err) console.log(err); 
+        res.clearCookie('connect.sid')
+        // res.send("logged out")
         return res.redirect("http://localhost:3000"); 
     }); // destroys session 
 })

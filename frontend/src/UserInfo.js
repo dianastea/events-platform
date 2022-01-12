@@ -6,6 +6,7 @@ import TodoList from "./components/TodoList";
 import AllEvents from "./AllEvents"; 
 import AllGroups from "./AllGroups"; 
 import UserEvents from "./UserEvents"; 
+import UserGroups from "./UserGroups"; 
 import InputGroup from "./components/InputGroup"; 
 import InputEvent from "./components/InputEvent"; 
 import InputTask from "./components/InputTask"; 
@@ -30,6 +31,7 @@ export default function UserInfo() {
                 <AllEvents id={user.id}/> 
                 <AllGroups user_id={user.id}/> 
                 <UserEvents id={user.id}/> 
+                <UserGroups user_id={user.id} /> 
             </div>
             
         </div>

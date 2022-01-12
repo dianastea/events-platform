@@ -10,15 +10,12 @@ import {
   Button
 } from "@material-ui/core";
 
-const card = {
-};
-
 export default function Group(props) {
 
   return (
     <div>
       <Grid item key={props.group.name}>
-        <Card style={card}>
+        <Card>
           <CardActionArea>
             <CardMedia
               component="img"

@@ -1,7 +1,8 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Input, Button } from '@material-ui/core';
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { createGroup } from "../services/UserService";
+import useUserInfo from "../services/userInfo";
 
 const form = {
   display: "grid",
@@ -15,18 +16,22 @@ const form = {
 
 
 
-const InputGroup = (props) => {
+function InputGroup(props) {
   const [state, setState] = useState({
     name: "",
     description: "",
-    user_id: props.user_id,
     groups: [],
     selected: 10
   });
+  const user_id = useUserInfo().id 
+  // useEffect(() => {
+  //   console.log('user id', user_id)
+  // }, [user_id])
 
   const onSubmitForm = async e => {
     e.preventDefault();
-    createGroup(state)
+    
+    createGroup({...state, user_id: user_id})
     window.location = "/"
   };
 
@@ -39,6 +44,7 @@ const InputGroup = (props) => {
 
   return (
     <Fragment>
+      <h2> {user_id} </h2> 
       <form noValidate autoComplete="off" style={form} onSubmit={onSubmitForm}>
         <Typography
           variant="h4">

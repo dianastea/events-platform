@@ -12,6 +12,23 @@ router.get('/', async (request, response, next) => {
     })
 })
 
+router.get('/:user_id', async (request, response, next) => {
+    await pool.query('SELECT * FROM group_users WHERE user_id=$1', [request.params.user_id], (err, res) => {
+        if (err) return next(err)
+        const entries = res.rows 
+        const groups = []
+        entries.forEach(async (entry, index) => {
+            await pool.query('SELECT * FROM groups WHERE name=$1', [entry.group_name], (err2, res2) => {
+                if (err2) return next(err2)
+                res2.rows.forEach((group) => {
+                    groups.push(group)
+                })
+                if (index == entries.length - 1) response.json(groups)
+            })
+        })
+    })
+})
+
 router.get('/users', async (request, response, next) => {
     await pool.query('SELECT * FROM group_users', (err, res) => {
         if (err) return next(err);

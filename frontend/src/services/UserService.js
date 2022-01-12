@@ -78,6 +78,15 @@ export async function getUserAdminGroups(id) {
     }
 }
 
+export async function getUserGroups(user_id) {
+    try {
+        const response = await(fetch(`/groups/${user_id}`))
+        return response.json(); 
+    } catch (error) {
+        return error; 
+    }
+}
+
 export async function getUserAdminEvents(id) {
     try {
         const response = await(fetch(`/events/admin/${id}`))
