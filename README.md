@@ -1,4 +1,3 @@
 # UniEvents Platform
-![Events!1111111](https://user-images.githubusercontent.com/46017623/147845295-6878f096-d0e0-4e40-abf9-980d05ac6f49.gif)
-![Events!22222](https://user-images.githubusercontent.com/46017623/147845330-1e0061c2-089b-4ce3-bd0c-958e9190908d.gif)
-![Events!3333](https://user-images.githubusercontent.com/46017623/147845328-6a7c59f1-4861-4367-aa90-fbe350a102ce.gif)
+![eventsplatform-1 1](https://user-images.githubusercontent.com/46017623/150700265-01256d42-cdfd-40c4-89ab-756f76197cc3.gif)
+![letsgo](https://user-images.githubusercontent.com/46017623/150700375-1b331a49-3304-4d05-bed2-d5f67d272e47.gif)
